@@ -9,7 +9,7 @@ pipeline {
             steps {
                 echo "Building.."
                 sh '''
-                mvn clean install -DskipTests
+                mvn clean package -DskipTests
                 '''
             }
         }
@@ -23,9 +23,17 @@ pipeline {
         }
         stage('Create Docker Image') {
             steps {
-                echo 'Deliver....'
+                echo 'Building Docker....'
                 sh '''
-                echo "Creating docker image"
+                docker build -t ajp_lab/sampleMicroService .
+                '''
+            }
+        }
+        stage('Running Docker') {
+            steps {
+                echo 'Running Docker....'
+                sh '''
+                docker run -p 8081:8080 ajp_lab/sampleMicroService -d
                 '''
             }
         }
