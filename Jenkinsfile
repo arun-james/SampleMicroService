@@ -25,7 +25,7 @@ pipeline {
             steps {
                 echo 'Building Docker....'
                 sh '''
-                docker build -t ajp_lab/sampleMicroService .
+                docker build -v /var/run/docker.sock:/var/run/docker.sock -t ajp_lab/sampleMicroService .
                 '''
             }
         }
@@ -33,7 +33,7 @@ pipeline {
             steps {
                 echo 'Running Docker....'
                 sh '''
-                docker run -p 8081:8080 ajp_lab/sampleMicroService -d
+                docker run -v /var/run/docker.sock:/var/run/docker.sock -p 8081:8080 ajp_lab/sampleMicroService -d
                 '''
             }
         }
