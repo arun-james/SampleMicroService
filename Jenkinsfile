@@ -25,7 +25,8 @@ pipeline {
             steps {
                 echo 'Building Docker....'
                 sh '''
-                docker build -v /var/run/docker.sock:/var/run/docker.sock -t ajp_lab/sampleMicroService .
+                docker run -ti --rm -v /var/run/docker.sock:/var/run/docker.sock docker /bin/ash
+                docker build -t ajp_lab/sampleMicroService .
                 '''
             }
         }
