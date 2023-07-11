@@ -39,8 +39,10 @@ pipeline {
             }
         }
             steps {
+            script {
                 echo 'Building Docker....'
                 dockerImage = docker.build registry + ":$BUILD_NUMBER"
+                }
             }
         }
         stage('Running Docker') {
@@ -50,9 +52,11 @@ pipeline {
                     }
                 }
             steps {
+            script {
                 echo 'Running Docker....'
                 docker.withRegistry( '', registryCredential ) {
                 dockerImage.push()
+                }
                 }
             }
         }
