@@ -37,14 +37,26 @@ pipeline {
                 }
             }
         }
-        stage('Running Docker') {
+        stage('publish Docker') {
+
+            steps {
+            script {
+                echo 'publishing Docker....'
+                docker.withRegistry( '', registryCredential ) {
+                dockerImage.push()
+                }
+                }
+            }
+        }
+        stage('Run Docker') {
 
             steps {
             script {
                 echo 'Running Docker....'
-                docker.withRegistry( '', registryCredential ) {
-                dockerImage.push()
-                }
+                sh '''
+                docker rm -f sample_microservice
+                docker run -p 8083:8080 --network bridge -d --name sample_microservice arunvsdocker/sample_micro_service:$BUILD_NUMBER
+                '''
                 }
             }
         }
