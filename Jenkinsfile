@@ -4,14 +4,14 @@ pipeline {
     registryCredential = 'dockerhub_id'
     dockerImage = ''
     }
-    agent none
+    agent {
+                node{
+                    label 'agent_jenkins_docker'
+                }
+            }
     stages {
         stage('Build') {
-        agent {
-                node {
-                    label 'docker-agent-mvn-jdk17'
-                    }
-              }
+
             steps {
                 echo "Building.."
                 sh '''
@@ -20,11 +20,7 @@ pipeline {
             }
         }
         stage('Test') {
-        agent {
-                node {
-                    label 'docker-agent-mvn-jdk17'
-                    }
-              }
+
             steps {
                 echo "Testing.."
                 sh '''
@@ -33,11 +29,7 @@ pipeline {
             }
         }
         stage('Create Docker Image') {
-        agent {
-            node{
-                label 'agent_jenkins_docker'
-            }
-        }
+
             steps {
             script {
                 echo 'Building Docker....'
@@ -46,11 +38,7 @@ pipeline {
             }
         }
         stage('Running Docker') {
-        agent {
-                    node{
-                        label 'agent_jenkins_docker'
-                    }
-                }
+
             steps {
             script {
                 echo 'Running Docker....'
