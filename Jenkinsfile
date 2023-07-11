@@ -1,11 +1,17 @@
 pipeline {
-    agent {
-        node {
-            label 'docker-agent-mvn-jdk17'
-            }
-      }
+    environment {
+    registry = "arunvsdocker/sample_micro_service"
+    registryCredential = 'dockerhub_id'
+    dockerImage = ''
+    }
+    agent none
     stages {
         stage('Build') {
+        agent {
+                node {
+                    label 'docker-agent-mvn-jdk17'
+                    }
+              }
             steps {
                 echo "Building.."
                 sh '''
@@ -14,6 +20,11 @@ pipeline {
             }
         }
         stage('Test') {
+        agent {
+                node {
+                    label 'docker-agent-mvn-jdk17'
+                    }
+              }
             steps {
                 echo "Testing.."
                 sh '''
@@ -22,20 +33,27 @@ pipeline {
             }
         }
         stage('Create Docker Image') {
+        agent {
+            node{
+                label 'agent_jenkins_docker'
+            }
+        }
             steps {
                 echo 'Building Docker....'
-                sh '''
-                docker run -ti --rm -v /var/run/docker.sock:/var/run/docker.sock docker /bin/ash
-                docker build -t ajp_lab/sampleMicroService .
-                '''
+                dockerImage = docker.build registry + ":$BUILD_NUMBER"
             }
         }
         stage('Running Docker') {
+        agent {
+                    node{
+                        label 'agent_jenkins_docker'
+                    }
+                }
             steps {
                 echo 'Running Docker....'
-                sh '''
-                docker run -v /var/run/docker.sock:/var/run/docker.sock -p 8081:8080 ajp_lab/sampleMicroService -d
-                '''
+                docker.withRegistry( '', registryCredential ) {
+                dockerImage.push()
+                }
             }
         }
     }
