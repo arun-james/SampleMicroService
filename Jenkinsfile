@@ -28,6 +28,15 @@ pipeline {
                 '''
             }
         }
+        stage('Sonar') {
+
+            steps {
+                echo "Analysing Code.."
+                sh '''
+                mvn sonar:sonar
+                '''
+            }
+        }
         stage('Create Docker Image') {
 
             steps {
