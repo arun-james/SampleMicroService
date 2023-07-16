@@ -24,7 +24,7 @@ pipeline {
             steps {
                 echo "Testing.."
                 sh '''
-                mvn install
+                mvn test
                 '''
             }
         }
@@ -33,7 +33,7 @@ pipeline {
             steps {
                 echo "Analysing Code.."
                 sh '''
-                mvn sonar:sonar
+                mvn install sonar:sonar
                 '''
             }
         }
